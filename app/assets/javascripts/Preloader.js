@@ -15,10 +15,15 @@ BasicGame.Preloader.prototype = {
 	preload: function () {
 
         // Boot.js에서 로딩한 이미지 설정
-		this.background = this.add.sprite(0, 0, 'preloaderBackground');
-		this.preloadBar = this.add.sprite(0, 100, 'preloaderBar');
+        //this.background = this.add.sprite(0, 0, 'preloaderBackground');
+        this.preloadBar = this.add.sprite(0, 100, 'preloaderBar');
 
-		this.load.setPreloadSprite(this.preloadBar);
+        this.load.image('mountains-back', 'assets/mountains-back.png');
+        this.load.image('mountains-mid1', 'assets/mountains-mid1.png');
+        this.load.image('mountains-mid2', 'assets/mountains-mid2.png');
+
+
+        this.load.setPreloadSprite(this.preloadBar);
 
 
 
@@ -30,8 +35,25 @@ BasicGame.Preloader.prototype = {
 		this.load.audio('titleMusic', ['audio/main_menu.mp3']);
 		this.load.bitmapFont('caslon', 'fonts/caslon.png', 'fonts/caslon.xml');
         */
-        this.load.image('bg', 'assets/bg_prerendered.png');
-        this.load.image('logo', 'assets/preloader_progressbar.png');
+        this.load.image('bg', 'assets/colored_land.png');
+        this.load.image('logo', 'assets/logo_title.png');
+
+        this.load.image('paddle', 'assets/paddleBlu.png');
+
+        this.load.image('playButton', 'assets/buttonDefault.png');
+        this.load.image('buttonOver', 'assets/buttonSelected.png');
+
+
+        this.load.image('element_1_rectangle', 'assets/element_blue_rectangle.png');
+        this.load.image('element_2_rectangle', 'assets/element_red_rectangle.png');
+        this.load.image('element_3_rectangle', 'assets/element_grey_rectangle.png');
+        this.load.image('element_4_rectangle', 'assets/element_green_rectangle.png');
+
+        this.load.image('element_1_rectangle_glossy', 'assets/element_blue_rectangle_glossy.png');
+        this.load.image('element_2_rectangle_glossy', 'assets/element_red_rectangle_glossy.png');
+        this.load.image('element_3_rectangle_glossy', 'assets/element_grey_rectangle_glossy.png');
+        this.load.image('element_4_rectangle_glossy', 'assets/element_green_rectangle_glossy.png');
+
         //this.load.script('webfont', '/assets/kenvector_future.ttf');
 
         this.load.atlas('tiles', 'assets/breakout.png', 'assets/breakout.json');
@@ -57,7 +79,11 @@ BasicGame.Preloader.prototype = {
 
 	create: function () {
 
-		//	Once the load has finished we disable the crop because we're going to sit in the update loop for a short while as the music decodes
+        // parallax
+
+        //Set the games background colour
+
+        //	Once the load has finished we disable the crop because we're going to sit in the update loop for a short while as the music decodes
 		this.preloadBar.cropEnabled = false;
 
         this.game.state.start('MainMenu');
@@ -65,6 +91,7 @@ BasicGame.Preloader.prototype = {
 	},
 
 	update: function () {
+
 
 		//	You don't actually need to do this, but I find it gives a much smoother game experience.
 		//	Basically it will wait for our audio file to be decoded before proceeding to the MainMenu.

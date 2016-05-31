@@ -13,7 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require phaser
+//= require phaser.js
 //= require Boot
 //= require Preloader
 //= require MainMenu
@@ -21,4 +21,4 @@
 //= require Congratulations
 //= require Game
 
-//= require_tree .
+

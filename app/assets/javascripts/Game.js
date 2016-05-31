@@ -45,7 +45,7 @@ BasicGame.Game = function (game) {
     this.paddleSpeed = 200;
 
     this.paddleInitialX = 0;
-    this.paddleInitialY = 368;
+    this.paddleInitialY = 700;
 
     this.dropItemLimit = 3;
     this.isPaddleNerfed = false;
@@ -115,7 +115,7 @@ BasicGame.Game.prototype = {
         this.ballsCount = 0;
         this.lives = 3;
         this.score = 0;
-        this.countDownTime = 3;
+        this.countDownTime = 1;
         this.countDownTimeElapsed = 0;
 
         this.game.camera.setSize(this.game.world.width, this.game.world.height);
@@ -176,13 +176,13 @@ BasicGame.Game.prototype = {
             //}
         }
 
-        this.game.physics.collide(this.balls, this.balls, this.ballHitBallHandler, this.ballHitBallProcess, this);
+        this.game.physics.arcade.collide(this.balls, this.balls, this.ballHitBallHandler, this.ballHitBallProcess, this);
 
-        this.game.physics.collide(this.balls, this.bricks, this.ballHitBrickHandler, this.ballHitBricklProcess, this);
+        this.game.physics.arcade.collide(this.balls, this.bricks, this.ballHitBrickHandler, this.ballHitBricklProcess, this);
 
-        this.game.physics.collide(this.paddle, this.balls, this.paddleHitBallHandler, this.paddleHitBallProcess, this);
+        this.game.physics.arcade.collide(this.paddle, this.balls, this.paddleHitBallHandler, this.paddleHitBallProcess, this);
 
-        this.game.physics.collide(this.paddle, this.items, this.paddleHitItemHandler, this.paddleHitItemProcess, this);
+        this.game.physics.arcade.collide(this.paddle, this.items, this.paddleHitItemHandler, this.paddleHitItemProcess, this);
 
         this.game.onRenderCallback = this.render;
     },
@@ -219,7 +219,7 @@ BasicGame.Game.prototype = {
 
         var r = 'red';
         var b = 'blue';
-        var o = 'orange';
+        var o = 'grey';
         var g = 'green';
         var X = null;
 
@@ -237,16 +237,16 @@ BasicGame.Game.prototype = {
              powerUps: 1,
              powerDowns: 1
              },*/
-             {
-                 name: "letsa begin",
-                 bricks: [
-                     [X, X, X, X, X, X, X],
-                     [X, X, X, X, X, X, X],
-                     [X, X, X, X, X, b, X]
-                 ],
-                 powerUps: 1,
-                 powerDowns: 1
-             },
+             //{
+             //    name: "letsa begin",
+             //    bricks: [
+             //        [X, X, X, X, X, X, X],
+             //        [X, X, X, X, X, X, X],
+             //        [X, X, X, X, X, b, X]
+             //    ],
+             //    powerUps: 1,
+             //    powerDowns: 1
+             //},
             {
                 name: "letsa begin",
                 bricks: [
@@ -384,25 +384,25 @@ BasicGame.Game.prototype = {
                         bID = 2;
                     } else if (color == "blue") {
                         bID = 1;
-                    } else if (color == "orange") {
+                    } else if (color == "grey") {
                         bID = 3;
                     } else if (color == "green") {
                         bID = 4;
                     }
-                    tempBrick = this.game.add.sprite(x * 32 + 48, y * 16 + 64, 'tiles', 'brick_' + bID + '_1.png');
-                    tempBrick.animations.add('idle', ['brick_' + bID + '_1.png'], 10, false, false);
-                    tempBrick.diedie = tempBrick.animations.add('brick_die', [
-                        'brick_' + bID + '_1.png',
-                        'brick_' + bID + '_2.png',
-                        'brick_' + bID + '_3.png',
-                        'brick_' + bID + '_4.png'
-                    ], 10, false, false);
-                    tempBrick.animations.add('brick_popin', [
-                        'brick_' + bID + '_4.png',
-                        'brick_' + bID + '_3.png',
-                        'brick_' + bID + '_2.png',
-                        'brick_' + bID + '_1.png'
-                    ], 10, false, false);
+                    tempBrick = this.game.add.sprite(x * 64 , y * 32 + 64, 'element_' + bID + '_rectangle');
+                    tempBrick.animations.add('idle', ['element_' + bID + '_rectangle'], 10, false, false);
+                    //tempBrick.diedie = tempBrick.animations.add('brick_die', [
+                    //    'element_' + bID + '_rectangle_glossy',
+                    //    'element_' + bID + '_rectangle',
+                    //    'element_' + bID + '_rectangle_glossy',
+                    //    'element_' + bID + '_rectangle'
+                    //], 10, false, false);
+                    //tempBrick.animations.add('brick_popin', [
+                    //    'element_' + bID + '_rectangle',
+                    //    'element_' + bID + '_rectangle_glossy',
+                    //    'element_' + bID + '_rectangle',
+                    //    'element_' + bID + '_rectangle_glossy'
+                    //], 10, false, false);
                     var tempCount = 0;
                     if(this.bricks.countLiving() > 0) {
                         tempCount = this.bricks.countLiving();
@@ -412,6 +412,7 @@ BasicGame.Game.prototype = {
                     //tempBrick.frameName = 'brick_' + bID + '_1.png';
                     //if you use this you must change the body size
                     // and it's easier if it's set when sprite is created
+                    this.physics.enable( tempBrick, Phaser.Physics.ARCADE );
 
                     tempBrick.body.bounce.setTo(1, 1);
                     tempBrick.body.immovable = true;
@@ -447,9 +448,13 @@ BasicGame.Game.prototype = {
     },
 
     createPaddle: function () {
-        this.paddle = this.game.add.sprite(this.paddleInitialX, this.paddleInitialY, 'tiles', 'paddle_big.png');
+        this.paddle = this.game.add.sprite(this.paddleInitialX, this.paddleInitialY, 'paddle');
+        this.paddle.width = 78;
+        this.paddle.height = 18;
+        //this.paddle.scale = 0.5;
         this.paddle.name = "paddle";
         this.paddle.anchor.setTo(0.5, 0); //center anchor/origin to the middle of the paddle
+        this.physics.enable( this.paddle, Phaser.Physics.ARCADE );
         this.paddle.body.immovable = true;
         this.paddle.body.customSeparateX = true;
         this.paddle.body.customSeparateY = true;
@@ -475,6 +480,8 @@ BasicGame.Game.prototype = {
         ], 10, false, false);
 
         tempBall.anchor.setTo(0.5, null);
+
+        this.physics.enable( tempBall, Phaser.Physics.ARCADE );
 
         tempBall.body.bounce.setTo(1, 1); //WHY THIS WORK BUT WITHOUT IT CANT USE CUSTOM SEPARETE???
 
@@ -545,6 +552,8 @@ BasicGame.Game.prototype = {
     },
 
     setBallVelocity: function (tempBall) {
+
+        this.physics.enable( tempBall, Phaser.Physics.ARCADE );
         tempBall.body.velocity.x = this.initialDirection * this.ballSpeed;
         tempBall.body.velocity.y = this.ballSpeed;
     },
@@ -602,8 +611,8 @@ BasicGame.Game.prototype = {
             if (this.paddle.body.x <= 0) {
                 this.paddle.body.x = 0;
             }
-            if (this.paddle.body.x >= this.game.world.width - this.paddle._cache.width) {
-                this.paddle.body.x = this.game.world.width - this.paddle._cache.width;
+            if (this.paddle.body.x >= this.game.world.width - this.paddle.width) {
+                this.paddle.body.x = this.game.world.width - this.paddle.width;
             }
         } else {
 
@@ -614,8 +623,8 @@ BasicGame.Game.prototype = {
                     this.paddle.body.velocity.x = -this.paddleSpeed;
                 }
             }else if ((this.dKey.isDown) && (!this.aKey.isDown)) {
-                if (this.paddle.body.x >= this.game.world.width - this.paddle._cache.width) {
-                    this.paddle.body.x = this.game.world.width - this.paddle._cache.width;
+                if (this.paddle.body.x >= this.game.world.width - this.paddle.width) {
+                    this.paddle.body.x = this.game.world.width - this.paddle.width;
                 } else {
                     this.paddle.body.velocity.x = this.paddleSpeed;
                 }
@@ -624,16 +633,16 @@ BasicGame.Game.prototype = {
             }
         }
 
-        if (this.game.input.keyboard.justReleased(Phaser.Keyboard.Z)) {
-             this.nerfPaddle();
-        }
+        //if (this.game.input.keyboard.justReleased(Phaser.Keyboard.Z)) {
+        //     this.nerfPaddle();
+        //}
 
         if (this.isPaddleNerfed) {
-            this.paddle.frameName = "paddle_small.png";
+            //this.paddle.frameName = "paddle_small.png";
         } else {
-            this.paddle.frameName = "paddle_big.png";
+            //this.paddle.frameName = "paddle_big.png";
         }
-        this.paddle.body.setSize(this.paddle._cache.width, this.paddle._cache.height);
+        this.paddle.body.setSize(this.paddle.width, this.paddle.height);
 
     },
 
@@ -747,7 +756,7 @@ BasicGame.Game.prototype = {
     resetCountDown: function () {
         this.countDown.revive();
         this.countDown.play("counter_three");
-        this.countDownTime = 3;
+        this.countDownTime = 1;
         this.countDownTimeElapsed = 0;
         this.countDownsecondTick = 1;
         this.isCountDownOff = false;

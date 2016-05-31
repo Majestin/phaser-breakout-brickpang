@@ -4,7 +4,7 @@
 BasicGame = {};
 
 BasicGame.Boot = function (game) {
-
+    ;
 };
 
 BasicGame.Boot.prototype = {
@@ -13,7 +13,7 @@ BasicGame.Boot.prototype = {
 
         // 배경 이미지와 로딩 프로그레스바 이미지 preloader
         this.load.image('preloaderBackground', 'assets/preloader_bg.png');
-        this.load.image('preloaderBar', 'assets/preloader_progressbar.png');
+        this.load.image('preloaderBar', 'assets/preloader_bar.png');
 
     },
 
@@ -32,8 +32,11 @@ BasicGame.Boot.prototype = {
         }
         else
         {
+
             // 모바일 - 초기화 설정 16:9
             this.game.stage.scaleMode = Phaser.StageScaleMode.SHOW_ALL;
+            this.game.physics.arcade.enableBody(this);
+
             this.game.stage.scale.minWidth = 450;
             this.game.stage.scale.minHeight = 800;
             this.game.stage.scale.maxWidth = 750;
