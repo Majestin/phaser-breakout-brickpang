@@ -38,7 +38,7 @@ BasicGame.Preloader.prototype = {
         this.load.image('bg', 'assets/colored_land.png');
         this.load.image('logo', 'assets/logo_title.png');
 
-        this.load.image('paddle', 'assets/paddleBlu.png');
+        //this.load.image('paddle', 'assets/paddleBlu.png');
 
         this.load.image('playButton', 'assets/buttonDefault.png');
         this.load.image('buttonOver', 'assets/buttonSelected.png');
@@ -56,7 +56,8 @@ BasicGame.Preloader.prototype = {
 
         //this.load.script('webfont', '/assets/kenvector_future.ttf');
 
-        this.load.atlas('tiles', 'assets/breakout.png', 'assets/breakout.json');
+        this.load.atlas('tiles', 'assets/breakout_new.png', 'assets/breakout_new.json');
+        this.load.atlas('tiles_old', 'assets/breakout.png', 'assets/breakout.json');
 
         this.load.audio('brickDeath', ['assets/brickDeath.mp3', 'assets/brickDeath.ogg', 'assets/brickDeath.wav']);
         this.load.audio('countdownBlip', ['assets/countdownBlip.mp3', 'assets/countdownBlip.ogg', 'assets/countdownBlip.wav']);

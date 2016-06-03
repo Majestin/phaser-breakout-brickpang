@@ -32,8 +32,8 @@ BasicGame.Game = function (game) {
     this.countDown;
     this.countDownTime = 3;
     this.countDownTimeElapsed = 0;
-    this.countDownInitialX = 140;
-    this.countDownInitialY = 200;
+    this.countDownInitialX = 215;
+    this.countDownInitialY = 300;
     this.isCountDownOff = false;
     this.countDownTimeInterval = 1000;
 
@@ -42,6 +42,7 @@ BasicGame.Game = function (game) {
     this.paddle;
     this.paddleDefaultWidth = 48;
     this.paddleSmallWidth = 32;
+
     this.paddleSpeed = 200;
 
     this.paddleInitialX = 0;
@@ -64,11 +65,15 @@ BasicGame.Game = function (game) {
     //0 is 1 becasue levels are in array
     this.currentLevel = 0;
 
-    this.ballSpeed = 220;
+    this.ballSpeed = 420;
     this.ballMaxVel = 300;
 
-    this.ballInitialX = 50;
-    this.ballInitialY = 240;
+    this.ballInitialX = 235;
+    this.ballInitialY = 300
+
+    this.newballInitialX = 50;
+    this.newballInitialX = 50;
+
     this.initialDirection = 1;
 
     this.wallWidth = 16;
@@ -237,16 +242,40 @@ BasicGame.Game.prototype = {
              powerUps: 1,
              powerDowns: 1
              },*/
-             //{
-             //    name: "letsa begin",
-             //    bricks: [
-             //        [X, X, X, X, X, X, X],
-             //        [X, X, X, X, X, X, X],
-             //        [X, X, X, X, X, b, X]
-             //    ],
-             //    powerUps: 1,
-             //    powerDowns: 1
-             //},
+
+            {
+                name: "letsa begin2",
+                bricks: [
+                    [X, X, X, X, X, X, X],
+                    [X, o, r, g, b, X, X],
+                    [X, X, X, X, X, X, X]
+                ],
+                powerUps: 1,
+                powerDowns: 1
+            },
+            {
+                name: "letsa begin2",
+                bricks: [
+                    [X, X, X, X, X, X, X],
+                    [X, X, X, X, X, X, X],
+                    [X, X, X, X, X, b, X]
+                ],
+                powerUps: 1,
+                powerDowns: 1
+            },
+            {
+                name: "how's it going?",
+                bricks: [
+                    [X, g, o, g, o, g, X],
+                    [X, b, b, b, b, b, X],
+                    [g, b, r, b, r, b, g],
+                    [g, b, b, b, b, b, g],
+                    [g, b, X, X, X, b, g],
+                    [X, b, b, b, b, b, X]
+                ],
+                powerUps: 1,
+                powerDowns: 1
+            },
             {
                 name: "letsa begin",
                 bricks: [
@@ -339,16 +368,33 @@ BasicGame.Game.prototype = {
     },
 
     createHUD: function () {
-        this.livesText = this.game.add.text(30, 390, 'lives: ' + this.lives, { font: "18px Arial", fill: "#000000", align: "left" });
-        this.scoreText = this.game.add.text(110, 390, 'score: ' + this.score, { font: "18px Arial", fill: "#000000", align: "left" });
-        this.levelText = this.game.add.text(220, 390, 'level: ' + (this.currentLevel + 1), { font: "18px Arial", fill: "#000000", align: "left" });
-        this.gameMessageText = this.game.add.text(this.game.world.centerX, 400, '- click to start -', { font: "40px Arial", fill: "#ffffff", align: "center" });
+        this.levelText = this.game.add.text(10, 10, 'LEVEL: ' + (this.currentLevel + 1), {
+            font: "30px kenvector_future",
+            fill: "#000000",
+            align: "left"
+        });
+        this.scoreText = this.game.add.text(this.game.width / 2 - 60, 10, 'SCORE: ' + this.score, {
+            font: "30px kenvector_future",
+            fill: "#000000",
+            align: "left"
+        });
+        this.livesText = this.game.add.text(this.game.width - 120, 10, 'LIVES: ' + this.lives, {
+            font: "30px kenvector_future",
+            fill: "#000000",
+            align: "left"
+        });
+
+        this.gameMessageText = this.game.add.text(this.game.world.centerX, 400, '- click to start -', {
+            font: "40px kenvector_future",
+            fill: "#ffffff",
+            align: "center"
+        });
         this.gameMessageText.anchor.setTo(0.5, 0.5);
         this.gameMessageText.visible = false;
     },
 
     createCounter: function () {
-        this.countDown = this.game.add.sprite(this.countDownInitialX, this.countDownInitialY, 'tiles', 'two.png');
+        this.countDown = this.game.add.sprite(this.countDownInitialX, this.countDownInitialY, 'tiles_old', 'two.png');
         this.countDown.animations.add('counter_three', ['three.png'], 10, false, false);
         this.countDown.animations.add('counter_two', ['two.png'], 10, false, false);
         this.countDown.animations.add('counter_one', ['one.png'], 10, false, false);
@@ -359,13 +405,13 @@ BasicGame.Game.prototype = {
     populateLevel: function (level) {
 
         //reset items
-        this.items.destroy();
+        this.items.callAll('kill');
         this.items = this.game.add.group();
         this.bricksWithItems = [];
         clearTimeout(this.recoverTimeout);
 
         //reset bricks
-        this.bricks.destroy();
+        this.bricks.callAll('kill');
         this.bricks = this.game.add.group();
 
         var Level = this.breakoutLevels[level];
@@ -387,24 +433,26 @@ BasicGame.Game.prototype = {
                     } else if (color == "grey") {
                         bID = 3;
                     } else if (color == "green") {
-                        bID = 4;
+                        bID = 5;
                     }
-                    tempBrick = this.game.add.sprite(x * 64 , y * 32 + 64, 'element_' + bID + '_rectangle');
-                    tempBrick.animations.add('idle', ['element_' + bID + '_rectangle'], 10, false, false);
-                    //tempBrick.diedie = tempBrick.animations.add('brick_die', [
-                    //    'element_' + bID + '_rectangle_glossy',
-                    //    'element_' + bID + '_rectangle',
-                    //    'element_' + bID + '_rectangle_glossy',
-                    //    'element_' + bID + '_rectangle'
-                    //], 10, false, false);
-                    //tempBrick.animations.add('brick_popin', [
-                    //    'element_' + bID + '_rectangle',
-                    //    'element_' + bID + '_rectangle_glossy',
-                    //    'element_' + bID + '_rectangle',
-                    //    'element_' + bID + '_rectangle_glossy'
-                    //], 10, false, false);
+                    tempBrick = this.game.add.sprite(x * 64, y * 32 + 64, 'tiles', 'brick_' + bID + '_1.png');
+
+                    tempBrick.animations.add('idle', ['brick_' + bID + '_1.png'], 10, false, false);
+                    tempBrick.diedie = tempBrick.animations.add('brick_die', [
+                        'brick_' + bID + '_1.png',
+                        'brick_' + bID + '_2.png',
+                        'brick_' + bID + '_1.png',
+                        'brick_' + bID + '_2.png'
+                    ], 10, false, false);
+                    tempBrick.animations.add('brick_popin', [
+                        'brick_' + bID + '_2.png',
+                        'brick_' + bID + '_1.png',
+                        'brick_' + bID + '_2.png',
+                        'brick_' + bID + '_1.png'
+                    ], 10, false, false);
+
                     var tempCount = 0;
-                    if(this.bricks.countLiving() > 0) {
+                    if (this.bricks.countLiving() > 0) {
                         tempCount = this.bricks.countLiving();
                     }
                     tempBrick.name = 'brick' + (tempCount + 1);
@@ -412,7 +460,7 @@ BasicGame.Game.prototype = {
                     //tempBrick.frameName = 'brick_' + bID + '_1.png';
                     //if you use this you must change the body size
                     // and it's easier if it's set when sprite is created
-                    this.physics.enable( tempBrick, Phaser.Physics.ARCADE );
+                    this.physics.enable(tempBrick, Phaser.Physics.ARCADE);
 
                     tempBrick.body.bounce.setTo(1, 1);
                     tempBrick.body.immovable = true;
@@ -428,13 +476,13 @@ BasicGame.Game.prototype = {
 
         //Give some random bricks the abbility to drop items
         var dropItemLimit = this.dropItemLimit + this.currentLevel;
-        var brickPartLimit = Math.floor(this.bricks.countLiving()/dropItemLimit);
+        var brickPartLimit = Math.floor(this.bricks.countLiving() / dropItemLimit);
         var brickStartLimit = 1;
         var brickEndLimit = brickPartLimit;
 
         for (var dropCount = 0; dropCount < dropItemLimit; dropCount++) {
 
-            var randomBrick = this.getRandomInt(brickStartLimit,brickEndLimit);
+            var randomBrick = this.getRandomInt(brickStartLimit, brickEndLimit);
 
             //Get random value in range
             var randomBrickName = "brick" + randomBrick;
@@ -448,13 +496,13 @@ BasicGame.Game.prototype = {
     },
 
     createPaddle: function () {
-        this.paddle = this.game.add.sprite(this.paddleInitialX, this.paddleInitialY, 'paddle');
-        this.paddle.width = 78;
-        this.paddle.height = 18;
+        this.paddle = this.game.add.sprite(this.paddleInitialX, this.paddleInitialY, 'tiles', 'paddle_big.png');
+        //this.paddle.width = 58;
+        //this.paddle.height = 18;
         //this.paddle.scale = 0.5;
         this.paddle.name = "paddle";
         this.paddle.anchor.setTo(0.5, 0); //center anchor/origin to the middle of the paddle
-        this.physics.enable( this.paddle, Phaser.Physics.ARCADE );
+        this.physics.enable(this.paddle, Phaser.Physics.ARCADE);
         this.paddle.body.immovable = true;
         this.paddle.body.customSeparateX = true;
         this.paddle.body.customSeparateY = true;
@@ -467,21 +515,22 @@ BasicGame.Game.prototype = {
         var tempBall;
         tempBall = this.game.add.sprite(this.ballInitialX, this.ballInitialY, 'tiles');
         var tempCount = 0;
-        if(this.balls.countLiving() > 0) {
+        if (this.balls.countLiving() > 0) {
             tempCount = this.balls.countLiving();
         }
-        tempBall.name = 'ball' + (tempCount + 1);
+        tempBall.name = 'ball' + (tempCount);
         tempBall.animations.add('rotate', [
-            'ball_1.png',
-            'ball_2.png',
-            'ball_3.png',
-            'ball_4.png',
-            'ball_5.png'
+            'ball_0.png',
+            'ball_1.png'
+            //,
+            //'ball_3.png',
+            //'ball_4.png',
+            //'ball_5.png'
         ], 10, false, false);
 
         tempBall.anchor.setTo(0.5, null);
 
-        this.physics.enable( tempBall, Phaser.Physics.ARCADE );
+        this.physics.enable(tempBall, Phaser.Physics.ARCADE);
 
         tempBall.body.bounce.setTo(1, 1); //WHY THIS WORK BUT WITHOUT IT CANT USE CUSTOM SEPARETE???
 
@@ -524,8 +573,7 @@ BasicGame.Game.prototype = {
         this.ballsCount = 0;
         var tempBall = this.balls.getFirstDead();
 
-        if (tempBall)
-        {
+        if (tempBall) {
             this.resetBall(tempBall);
         }
 
@@ -536,7 +584,7 @@ BasicGame.Game.prototype = {
         //console.log("Oh my god I can't believe it, I never seen a ball to die before");
         if (this.balls.countLiving() == 0) {
             this.lives -= 1;
-            this.livesText.content = 'lives: ' + this.lives;
+            this.livesText.text = 'LIVES: ' + this.lives;
             var firstDeadBall = this.balls.getFirstDead();
             firstDeadBall.revive();
             this.ballsCount += 1;
@@ -553,7 +601,7 @@ BasicGame.Game.prototype = {
 
     setBallVelocity: function (tempBall) {
 
-        this.physics.enable( tempBall, Phaser.Physics.ARCADE );
+        this.physics.enable(tempBall, Phaser.Physics.ARCADE);
         tempBall.body.velocity.x = this.initialDirection * this.ballSpeed;
         tempBall.body.velocity.y = this.ballSpeed;
     },
@@ -576,7 +624,7 @@ BasicGame.Game.prototype = {
             this.populateLevel(this.currentLevel);
             this.resetCountDown();
         }
-        this.levelText.content = 'level: ' + (this.currentLevel + 1);
+        this.levelText.text = 'LEVEL: ' + (this.currentLevel + 1);
     },
 
     nextLevel: function () {
@@ -596,7 +644,7 @@ BasicGame.Game.prototype = {
 
         }
 
-        this.levelText.content = 'level: ' + (this.currentLevel + 1);
+        this.levelText.text = 'LEVEL: ' + (this.currentLevel + 1);
     },
 
     paddleUpdate: function () {
@@ -622,7 +670,7 @@ BasicGame.Game.prototype = {
                 } else {
                     this.paddle.body.velocity.x = -this.paddleSpeed;
                 }
-            }else if ((this.dKey.isDown) && (!this.aKey.isDown)) {
+            } else if ((this.dKey.isDown) && (!this.aKey.isDown)) {
                 if (this.paddle.body.x >= this.game.world.width - this.paddle.width) {
                     this.paddle.body.x = this.game.world.width - this.paddle.width;
                 } else {
@@ -638,9 +686,9 @@ BasicGame.Game.prototype = {
         //}
 
         if (this.isPaddleNerfed) {
-            //this.paddle.frameName = "paddle_small.png";
+            this.paddle.frameName = "paddle_small.png";
         } else {
-            //this.paddle.frameName = "paddle_big.png";
+            this.paddle.frameName = "paddle_big.png";
         }
         this.paddle.body.setSize(this.paddle.width, this.paddle.height);
 
@@ -810,7 +858,7 @@ BasicGame.Game.prototype = {
 
         var bounceCoefficient = 0;
 
-        function coefficient(bounceScale, halfWidth){
+        function coefficient(bounceScale, halfWidth) {
 
             if (bounceScale > 0 && bounceScale < halfWidth / 3) {
                 return 0.7;
@@ -860,9 +908,9 @@ BasicGame.Game.prototype = {
 
         this.score += this.scorePerBrick;
 
-        this.scoreText.content = 'score: ' + this.score;
+        this.scoreText.text = 'SCORE: ' + this.score;
 
-        if( this.bricksWithItems.indexOf(_brick.name) > -1 ){
+        if (this.bricksWithItems.indexOf(_brick.name) > -1) {
             this.dropItem(_brick.x, _brick.y);
         }
     },
@@ -875,23 +923,23 @@ BasicGame.Game.prototype = {
         return true;
     },
 
-    dropItem: function (dropItemInitialX,dropItemInitialY) {
+    dropItem: function (dropItemInitialX, dropItemInitialY) {
 
         var typeFrame = "";
         var itemEffectName = "";
 
-        if(Math.floor(Math.random()*2)){
-            typeFrame = 'power_down.png';
+        if (Math.floor(Math.random() * 2)) {
+            typeFrame = 'power_paddlesize_down.png';
             itemEffectName = "powerDown";
         } else {
-            typeFrame = 'power_up.png';
+            typeFrame = 'power_ball_up.png';
             itemEffectName = "powerUp";
         }
 
         var dropItem;
-        dropItem = this.game.add.sprite(this.getRandomInt(32, this.game.world.width - 64), -32, 'tiles', typeFrame);
+        dropItem = this.game.add.sprite(dropItemInitialX, dropItemInitialY, 'tiles', typeFrame);
         var tempCount = 0;
-        if(this.items.countLiving() > 0) {
+        if (this.items.countLiving() > 0) {
             tempCount = this.items.countLiving();
         }
         dropItem.name = 'item' + (tempCount + 1);
@@ -899,9 +947,10 @@ BasicGame.Game.prototype = {
         //custom property
         dropItem.itemEffectName = itemEffectName;
 
+        this.physics.enable(dropItem, Phaser.Physics.ARCADE);
         dropItem.body.x = dropItemInitialX;
         dropItem.body.y = dropItemInitialY;
-        dropItem.body.velocity.y = 100;
+        dropItem.body.velocity.y = 200;
 
         this.items.add(dropItem);
     },
@@ -916,7 +965,7 @@ BasicGame.Game.prototype = {
             if (this.bricks.countLiving() == 0) {
                 //  New level starts
                 this.score += this.scorePerLevel;
-                this.scoreText.content = 'score: ' + this.score;
+                this.scoreText.text = 'SCORE: ' + this.score;
                 this.nextLevel();
             }
         }
@@ -928,7 +977,7 @@ BasicGame.Game.prototype = {
 
     paddleHitItemProcess: function (paddle, item) {
 
-        if(item.itemEffectName == "powerDown"){
+        if (item.itemEffectName == "powerDown") {
             this.nerfPaddle();
             //play a sound
             this.powerdown.play();
@@ -1000,7 +1049,7 @@ BasicGame.Game.prototype = {
         this.game.state.start('GameOver');
     },
 
-    gameWin: function(){
+    gameWin: function () {
         this.game.state.start('Congratulations');
     },
 
