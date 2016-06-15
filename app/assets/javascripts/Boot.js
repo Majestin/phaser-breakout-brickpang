@@ -12,8 +12,8 @@ BasicGame.Boot.prototype = {
     preload: function () {
 
         // 배경 이미지와 로딩 프로그레스바 이미지 preloader
-        this.load.image('preloaderBackground', 'assets/preloader_bg.png');
-        this.load.image('preloaderBar', 'assets/preloader_bar.png');
+        this.load.image('preloaderBackground', 'assets/images/cpreloader_bg.png');
+        this.load.image('preloaderBar', 'assets/images/preloader_bar.png');
 
     },
 

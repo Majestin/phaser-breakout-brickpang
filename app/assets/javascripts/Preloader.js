@@ -32,42 +32,42 @@ BasicGame.Preloader.prototype = {
 		this.load.audio('titleMusic', ['audio/main_menu.mp3']);
 		this.load.bitmapFont('caslon', 'fonts/caslon.png', 'fonts/caslon.xml');
         */
-        this.load.image('bg', 'assets/colored_land.png');
-        this.load.image('logo', 'assets/logo_title.png');
+        this.load.image('bg', 'assets/images/colored_land.png');
+        this.load.image('logo', 'assets/images/logo_title.png');
 
         //this.load.image('paddle', 'assets/paddleBlu.png');
 
-        this.load.image('playButton', 'assets/buttonDefault.png');
-        this.load.image('buttonOver', 'assets/buttonSelected.png');
+        this.load.image('playButton', 'assets/images/buttonDefault.png');
+        this.load.image('buttonOver', 'assets/images/buttonSelected.png');
 
 
-        this.load.image('element_1_rectangle', 'assets/element_blue_rectangle.png');
-        this.load.image('element_2_rectangle', 'assets/element_red_rectangle.png');
-        this.load.image('element_3_rectangle', 'assets/element_grey_rectangle.png');
-        this.load.image('element_4_rectangle', 'assets/element_green_rectangle.png');
+        this.load.image('element_1_rectangle', 'assets/images/element_blue_rectangle.png');
+        this.load.image('element_2_rectangle', 'assets/images/element_red_rectangle.png');
+        this.load.image('element_3_rectangle', 'assets/images/element_grey_rectangle.png');
+        this.load.image('element_4_rectangle', 'assets/images/element_green_rectangle.png');
 
-        this.load.image('element_1_rectangle_glossy', 'assets/element_blue_rectangle_glossy.png');
-        this.load.image('element_2_rectangle_glossy', 'assets/element_red_rectangle_glossy.png');
-        this.load.image('element_3_rectangle_glossy', 'assets/element_grey_rectangle_glossy.png');
-        this.load.image('element_4_rectangle_glossy', 'assets/element_green_rectangle_glossy.png');
+        this.load.image('element_1_rectangle_glossy', 'assets/images/element_blue_rectangle_glossy.png');
+        this.load.image('element_2_rectangle_glossy', 'assets/images/element_red_rectangle_glossy.png');
+        this.load.image('element_3_rectangle_glossy', 'assets/images/element_grey_rectangle_glossy.png');
+        this.load.image('element_4_rectangle_glossy', 'assets/images/element_green_rectangle_glossy.png');
 
 
         //this.load.image('fevertime_bar', 'assets/timer.png');
-        this.load.spritesheet('timer', 'assets/timer.png', 150, 20);
-        this.load.image('timer_bg', 'assets/timer_bg.png');
-        this.load.image('timer_gauge', 'assets/timer_gauge.png');
+        this.load.spritesheet('timer', 'assets/images/timer.png', 150, 20);
+        this.load.image('timer_bg', 'assets/images/timer_bg.png');
+        this.load.image('timer_gauge', 'assets/images/timer_gauge.png');
 
-        //this.load.script('webfont', '/assets/kenvector_future.ttf');
+        //this.load.script('webfont', '/assets/images/kenvector_future.ttf');
 
-        this.load.atlas('tiles', 'assets/breakout_new.png', 'assets/breakout_new.json');
-        this.load.atlas('tiles_old', 'assets/breakout.png', 'assets/breakout.json');
+        this.load.atlas('tiles', 'assets/images/breakout_new.png', 'assets/images/breakout_new.json');
+        this.load.atlas('tiles_old', 'assets/images/breakout.png', 'assets/images/breakout.json');
 
-        this.load.audio('brickDeath', ['assets/brickDeath.mp3', 'assets/brickDeath.ogg', 'assets/brickDeath.wav']);
-        this.load.audio('countdownBlip', ['assets/countdownBlip.mp3', 'assets/countdownBlip.ogg', 'assets/countdownBlip.wav']);
-        this.load.audio('powerdown', ['assets/powerdown.mp3', 'assets/powerdown.ogg', 'assets/powerdown.wav']);
-        this.load.audio('powerup', ['assets/powerup.mp3', 'assets/powerup.ogg', 'assets/powerup.wav']);
-        this.load.audio('recover', ['assets/recover.mp3', 'assets/recover.ogg', 'assets/recover.wav']);
-        this.load.audio('fevertime_sound', ['assets/fevertime_sound.mp3', 'assets/fevertime_sound.ogg', 'assets/fevertime_sound.wav']);
+        this.load.audio('brickDeath', ['assets/sfx/brickDeath.mp3', 'assets/sfx/brickDeath.ogg', 'assets/sfx/brickDeath.wav']);
+        this.load.audio('countdownBlip', ['assets/sfx/countdownBlip.mp3', 'assets/sfx/countdownBlip.ogg', 'assets/sfx/countdownBlip.wav']);
+        this.load.audio('powerdown', ['assets/sfx/powerdown.mp3', 'assets/sfx/powerdown.ogg', 'assets/sfx/powerdown.wav']);
+        this.load.audio('powerup', ['assets/sfx/powerup.mp3', 'assets/sfx/powerup.ogg', 'assets/sfx/powerup.wav']);
+        this.load.audio('recover', ['assets/sfx/recover.mp3', 'assets/sfx/recover.ogg', 'assets/sfx/recover.wav']);
+        this.load.audio('fevertime_sound', ['assets/sfx/fevertime_sound.mp3', 'assets/sfx/fevertime_sound.ogg', 'assets/sfx/fevertime_sound.wav']);
 
 		//	+ lots of other required assets here
 
