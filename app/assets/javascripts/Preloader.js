@@ -18,9 +18,9 @@ BasicGame.Preloader.prototype = {
         //this.background = this.add.sprite(0, 0, 'preloaderBackground');
         this.preloadBar = this.add.sprite(0, 100, 'preloaderBar');
 
-        this.load.image('mountains-back', 'assets/mountains-back.png');
-        this.load.image('mountains-mid1', 'assets/mountains-mid1.png');
-        this.load.image('mountains-mid2', 'assets/mountains-mid2.png');
+        //this.load.image('mountains-back', 'assets/mountains-back.png');
+        //this.load.image('mountains-mid1', 'assets/mountains-mid1.png');
+        //this.load.image('mountains-mid2', 'assets/mountains-mid2.png');
 
 
         this.load.setPreloadSprite(this.preloadBar);
