@@ -15,12 +15,6 @@ BasicGame.MainMenu.prototype = {
 	create: function () {
         //this.game.stage.backgroundColor = '#697e96';
 
-		//	We've already preloaded our assets, so let's kick right into the Main Menu itself.
-		//	Here all we're doing is playing some mu
-		//
-		//     game.load.image('bg', 'assets/images/bg_prerendered.png');    game.load.image('bg', 'assets/images/bg_prerendered.png');    game.load.image('bg', 'assets/images/bg_prerendered.png');sic and adding a picture and button
-		//	Naturally I expect you to do something significantly better :)
-
         // 450 * 800
 
         this.game.add.sprite(0, 0, 'bg');
@@ -41,12 +35,12 @@ BasicGame.MainMenu.prototype = {
         //this.gameMessageText.anchor.setTo(0.5, 0);
 
         //add text
-        this.settingButton = this.add.button(this.game.width / 2 - 95, 620, 'playButton', this.startGame, this);
-        this.gameMessageTextSetting = this.add.text(35, 5, 'SETTING', { font: "400 30px kenvector_future", fill: "#000000", align: "center" });
+        //this.settingButton = this.add.button(this.game.width / 2 - 95, 620, 'playButton',this.setting, this);
+        //this.gameMessageTextSetting = this.add.text(35, 5, 'SETTING', { font: "400 30px kenvector_future", fill: "#000000", align: "center" });
         //console.log(this.gameMessageTextSetting);
 
         //this.gameMessageTextSetting.anchor.setTo(0.5, 0);
-        this.settingButton.addChild(this.gameMessageTextSetting);
+        //this.settingButton.addChild(this.gameMessageTextSetting);
 
         //add a click handler
         //this.game.input.onDown.add(this.click, this);
@@ -63,13 +57,19 @@ BasicGame.MainMenu.prototype = {
 
 	startGame: function (pointer) {
 
-		//	Ok, the Play Button has been clicked or touched, so let's stop the music (otherwise it'll carry on playing)
 		//this.music.stop();
 
 		//	And start the actual game
 		this.game.state.start('Game');
 
 	} ,
+    Setting: function (pointer) {
+
+        //this.music.stop();
+
+        this.game.state.start('Game');
+
+    } ,
 
     click: function(x, y, timedown) {
         console.log("CLICK IS MADE");

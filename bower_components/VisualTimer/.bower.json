@@ -1,0 +1,14 @@
+{
+  "name": "VisualTimer",
+  "homepage": "https://github.com/terebentina/VisualTimer",
+  "_release": "ad9fab31f8",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "ad9fab31f8529bf5402af96857761bf8b6dbced4"
+  },
+  "_source": "git://github.com/terebentina/VisualTimer.git",
+  "_target": "*",
+  "_originalSource": "git://github.com/terebentina/VisualTimer.git",
+  "_direct": true
+}

@@ -1,25 +1,21 @@
 BasicGame.Game = function (game) {
 
-    //	When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
 
-    this.game;		//	a reference to the currently running game
-    this.add;		//	used to add sprites, text, groups, etc
-    this.camera;	//	a reference to the game camera
-    this.cache;		//	the game cache
-    this.input;		//	the global input manager (you can access this.input.keyboard, this.input.mouse, as well from it)
-    this.load;		//	for preloading assets
-    this.math;		//	lots of useful common math operations
-    this.sound;		//	the sound manager - add a sound, play one, set-up markers, etc
-    this.stage;		//	the game stage
-    this.time;		//	the clock
-    this.tweens;	//	the tween manager
-    this.world;		//	the game world
-    this.particles;	//	the particle manager
-    this.physics;	//	the physics manager
-    this.rnd;		//	the repeatable random number generator
-
-    //	You can use any of these from any function within this State.
-    //	But do consider them as being 'reserved words', i.e. don't create a property for your own game called "world" or you'll over-write the world reference.
+    this.game;
+    this.add;
+    this.camera;
+    this.cache;
+    this.input;
+    this.load;
+    this.math;
+    this.sound;
+    this.stage;
+    this.time;
+    this.tweens;
+    this.world;
+    this.particles;
+    this.physics;
+    this.rnd;
 
     this.debug = false;
 
@@ -28,6 +24,7 @@ BasicGame.Game = function (game) {
     this.powerdown = null;
     this.powerup = null;
     this.recover = null;
+    this.fevertimesound = null;
 
     this.countDown;
     this.countDownTime = 3;
@@ -48,9 +45,12 @@ BasicGame.Game = function (game) {
     this.paddleInitialX = 0;
     this.paddleInitialY = 700;
 
-    this.dropItemLimit = 3;
+    this.dropItemCount = 3;
+    this.dropItemLimit = 5;
+    this.isPaddleBuffed = false;
     this.isPaddleNerfed = false;
-    this.paddleNerfTime = 6000;
+    //TODO paddleNerfTime 변경해야함
+    this.paddleNerfTime = 2000;
     this.recoverTimeout = null;
 
     this.balls;
@@ -65,14 +65,12 @@ BasicGame.Game = function (game) {
     //0 is 1 becasue levels are in array
     this.currentLevel = 0;
 
-    this.ballSpeed = 420;
+    //TODO ballSpeed 변경
+    this.ballSpeed = 800;
     this.ballMaxVel = 300;
 
     this.ballInitialX = 235;
     this.ballInitialY = 300
-
-    this.newballInitialX = 50;
-    this.newballInitialX = 50;
 
     this.initialDirection = 1;
 
@@ -99,7 +97,19 @@ BasicGame.Game = function (game) {
 
     this.breakoutLevels;
 
-    this.shakeEffect = false;
+    this.shakeEffect = true;
+
+
+    this.fevertime_bar_gauge;
+    this.fevertime_bar_bg;
+
+    // TODO Fever time change
+    this.feverscore_max = 500;
+    this.feverscore = 0;
+
+    this.fevertime = 7000;
+    this.isfevertime = false;
+    this.feverTimeout = null;
 
 };
 
@@ -127,6 +137,14 @@ BasicGame.Game.prototype = {
 
         //remove the camera bounds so we can shake it later ;)
         this.game.camera.bounds = null;
+
+
+        //Fever Time Bar Initializing
+        this.fevertime_bar_bg = this.game.add.sprite(this.game.width - 50, this.game.height - 400, 'timer_bg');
+        this.fevertime_bar_gauge = this.game.add.sprite(this.game.width - 50, this.game.height - 250, 'timer_gauge');
+        this.fevertime_bar_gauge.height = 0;
+        this.feverscore = 0;
+        this.isfevertime = false;
 
         this.createPaddle();
 
@@ -164,11 +182,18 @@ BasicGame.Game.prototype = {
         this.aKey = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
         this.dKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
 
+        //this.fevertime_bar = this.game.add.sprite(this.game.width - 50, 200, 'timer');
+        //this.fevertime_bar.rotation = .90;
+        //fevertime_bar.width = 10;
+        //this.fevertime_bar = new Phaser.Rectangle(100, 100, 40, 200);
+        //this.rect.width = 10;
+        //this.fevertime_bar.crop(this.rect);
+
+
     },
 
     update: function () {
 
-        //	Honestly, just about anything could go here. It's YOUR game after all. Eat your heart out!
         this.paddleUpdate();
 
         this.countDownUpdate();
@@ -195,8 +220,6 @@ BasicGame.Game.prototype = {
     render: function () {
 
         if (this.debug) {
-
-            //ALL THIS CODE IS LEFT ONPURPOSE AND WORKS IN CANVAS ONLY
 
             //this.game.debug.renderInputInfo(20, 20);
 
@@ -228,8 +251,6 @@ BasicGame.Game.prototype = {
         var g = 'green';
         var X = null;
 
-        //you can uncoment the dev level and or/add a level of your own
-        //powerUps are not picked from the values bellow but set with: this.dropItemLimit
         this.breakoutLevels = [
             /*{
              name: "debug level",
@@ -244,27 +265,32 @@ BasicGame.Game.prototype = {
              },*/
 
             {
-                name: "letsa begin2",
+                name: "game stage 1",
                 bricks: [
                     [X, X, X, X, X, X, X],
-                    [X, o, r, g, b, X, X],
-                    [X, X, X, X, X, X, X]
+                    [X, X, r, r, r, X, X],
+                    [X, b, b, b, b, b, X],
+                    [X, b, g, g, g, b, X],
+                    [X, b, g, g, g, b, X]
                 ],
                 powerUps: 1,
                 powerDowns: 1
             },
             {
-                name: "letsa begin2",
+                name: "game stage 2",
                 bricks: [
-                    [X, X, X, X, X, X, X],
-                    [X, X, X, X, X, X, X],
-                    [X, X, X, X, X, b, X]
+                    [X, g, g, X, g, g, X],
+                    [g, g, g, g, g, g, g],
+                    [g, g, g, g, g, g, g],
+                    [X, g, g, g, g, g, X],
+                    [X, X, g, g, g, X, X],
+                    [X, X, X, g, X, X, X]
                 ],
                 powerUps: 1,
                 powerDowns: 1
             },
             {
-                name: "how's it going?",
+                name: "game stage 3",
                 bricks: [
                     [X, g, o, g, o, g, X],
                     [X, b, b, b, b, b, X],
@@ -277,17 +303,20 @@ BasicGame.Game.prototype = {
                 powerDowns: 1
             },
             {
-                name: "letsa begin",
+                name: "game stage 4",
                 bricks: [
-                    [X, X, X, o, X, X, X],
-                    [o, b, g, g, g, b, o],
-                    [X, b, b, b, b, b, X]
+                    [g, X, X, g, X, X, g],
+                    [X, r, r, b, r, r, X],
+                    [g, b, X, X, X, b, g],
+                    [g, b, X, X, X, b, g],
+                    [g, b, X, X, X, b, g],
+                    [r, b, b, b, b, b, r]
                 ],
                 powerUps: 1,
                 powerDowns: 1
             },
             {
-                name: "how's it going?",
+                name: "game stage 5",
                 bricks: [
                     [X, g, o, g, o, g, X],
                     [X, b, b, b, b, b, X],
@@ -300,7 +329,7 @@ BasicGame.Game.prototype = {
                 powerDowns: 1
             },
             {
-                name: 'tie fighta!',
+                name: 'game stage 6',
                 bricks: [
                     [X, b, X, g, X, b, X],
                     [b, X, b, o, b, X, b],
@@ -337,12 +366,10 @@ BasicGame.Game.prototype = {
         this.powerdown = this.game.add.audio('powerdown');
         this.powerup = this.game.add.audio('powerup');
         this.recover = this.game.add.audio('recover');
+        this.fevertimesound = this.game.add.audio('fevertime_sound');
     },
 
     click: function (x, y, timedown) {
-        //Uncoment to make every mouse click
-        //create a ball and shake screen
-
         //this.createBall(true);
         //this.shakeGame();
     },
@@ -363,8 +390,9 @@ BasicGame.Game.prototype = {
         this.countDownTimeElapsed = 0;
         this.countDownsecondTick = 1;
         this.isCountDownOff = false;
+        this.isPaddleBuffed = false;
         this.isPaddleNerfed = false;
-        this.paddleNerfTime = 6000;
+        this.paddleNerfTime = 2000;
     },
 
     createHUD: function () {
@@ -373,7 +401,7 @@ BasicGame.Game.prototype = {
             fill: "#000000",
             align: "left"
         });
-        this.scoreText = this.game.add.text(this.game.width / 2 - 60, 10, 'SCORE: ' + this.score, {
+        this.scoreText = this.game.add.text(this.game.width / 2 - 80, 10, 'SCORE: ' + this.score, {
             font: "30px kenvector_future",
             fill: "#000000",
             align: "left"
@@ -458,8 +486,6 @@ BasicGame.Game.prototype = {
                     tempBrick.name = 'brick' + (tempCount + 1);
 
                     //tempBrick.frameName = 'brick_' + bID + '_1.png';
-                    //if you use this you must change the body size
-                    // and it's easier if it's set when sprite is created
                     this.physics.enable(tempBrick, Phaser.Physics.ARCADE);
 
                     tempBrick.body.bounce.setTo(1, 1);
@@ -474,7 +500,6 @@ BasicGame.Game.prototype = {
             }
         }
 
-        //Give some random bricks the abbility to drop items
         var dropItemLimit = this.dropItemLimit + this.currentLevel;
         var brickPartLimit = Math.floor(this.bricks.countLiving() / dropItemLimit);
         var brickStartLimit = 1;
@@ -484,7 +509,6 @@ BasicGame.Game.prototype = {
 
             var randomBrick = this.getRandomInt(brickStartLimit, brickEndLimit);
 
-            //Get random value in range
             var randomBrickName = "brick" + randomBrick;
             this.bricksWithItems.push(randomBrickName);
 
@@ -501,17 +525,16 @@ BasicGame.Game.prototype = {
         //this.paddle.height = 18;
         //this.paddle.scale = 0.5;
         this.paddle.name = "paddle";
-        this.paddle.anchor.setTo(0.5, 0); //center anchor/origin to the middle of the paddle
+        this.paddle.anchor.setTo(0.5, 0);
         this.physics.enable(this.paddle, Phaser.Physics.ARCADE);
         this.paddle.body.immovable = true;
         this.paddle.body.customSeparateX = true;
         this.paddle.body.customSeparateY = true;
-        this.paddle.body.collideWorldBounds = true;   //check how to make a custom not bouncing collision
+        this.paddle.body.collideWorldBounds = true;
     },
 
     createBall: function (active) {
 
-        //create a temp ball which will be added to the balls group
         var tempBall;
         tempBall = this.game.add.sprite(this.ballInitialX, this.ballInitialY, 'tiles');
         var tempCount = 0;
@@ -532,7 +555,7 @@ BasicGame.Game.prototype = {
 
         this.physics.enable(tempBall, Phaser.Physics.ARCADE);
 
-        tempBall.body.bounce.setTo(1, 1); //WHY THIS WORK BUT WITHOUT IT CANT USE CUSTOM SEPARETE???
+        tempBall.body.bounce.setTo(1, 1);
 
         if (active) {
             this.setBallVelocity(tempBall);
@@ -566,9 +589,6 @@ BasicGame.Game.prototype = {
         //            ball.kill();
         //         }, false);
 
-        //The code bellow is a better way of the code above ...when you want to mass murder
-        // but the code above can be used for any function/code and not just kill/revive and so on.
-
         this.balls.callAll('kill');
         this.ballsCount = 0;
         var tempBall = this.balls.getFirstDead();
@@ -580,8 +600,6 @@ BasicGame.Game.prototype = {
     },
 
     takeOneLifeDown: function () {
-        //uncoment to have a cool lyrics when player drops a ball
-        //console.log("Oh my god I can't believe it, I never seen a ball to die before");
         if (this.balls.countLiving() == 0) {
             this.lives -= 1;
             this.livesText.text = 'LIVES: ' + this.lives;
@@ -629,7 +647,6 @@ BasicGame.Game.prototype = {
 
     nextLevel: function () {
         if (this.currentLevel >= 3) {
-            //the player reached the holly grail
             this.gameWin();
         }
 
@@ -650,9 +667,6 @@ BasicGame.Game.prototype = {
     paddleUpdate: function () {
 
         if (this.mouseControl) {
-
-            //this is essential so the paddle is centered and phisics works ok (if padle.x is used then the
-            // body.x is not udpated corectly and collisions in same direction are missed)
 
             this.paddle.body.x = this.game.input.worldX - this.paddle.body.halfWidth;
 
@@ -681,44 +695,53 @@ BasicGame.Game.prototype = {
             }
         }
 
-        //if (this.game.input.keyboard.justReleased(Phaser.Keyboard.Z)) {
-        //     this.nerfPaddle();
-        //}
+        if (this.game.input.keyboard.addKey(Phaser.Keyboard.Z).isDown) {
+             this.buffPaddle();
+        }
 
         if (this.isPaddleNerfed) {
-            this.paddle.frameName = "paddle_small.png";
+            this.paddle.width = 52;
+            //this.paddle.frameName = "paddle_small.png";
+        } else if (this.isPaddleBuffed) {
+            this.paddle.width = 100;
         } else {
-            this.paddle.frameName = "paddle_big.png";
+            //this.paddle.frameName = "paddle_big.png";
+            this.paddle.width = 76;
         }
+
         this.paddle.body.setSize(this.paddle.width, this.paddle.height);
 
     },
 
-    nerfPaddle: function () {
+    buffPaddle: function () {
+        console.log('buffPaddle');
+        if (this.isPaddleBuffed || this.isPaddleNerfed) {
+            clearTimeout(this.recoverTimeout);
+        }
 
-        //clear the time out if paddle was already nerfed
-        //then the the new timeout will overwrite the old
-        if (this.isPaddleNerfed) {
+        this.isPaddleBuffed = true;
+        var that = this;
+
+        this.recoverTimeout = setTimeout(function () {
+            that.isPaddleBuffed = false;
+            that.isPaddleNerfed = false;
+            that.recover.play();
+        }, this.paddleNerfTime);
+    },
+
+    nerfPaddle: function () {
+        if (this.isPaddleNerfed || this.isPaddleBuffed) {
             clearTimeout(this.recoverTimeout);
         }
 
         this.isPaddleNerfed = true;
-
-        //save a reference to the context where the setTimeout function call is made,
-        // because setTimeout executes the function with this pointing to the global object
         var that = this;
 
         this.recoverTimeout = setTimeout(function () {
-
-            //It's time to restore the paddle
-            //and use that instead this!!! :) or you'll fall in a trap
+            that.isPaddleBuffed = false;
             that.isPaddleNerfed = false;
-
-            //play a sound
             that.recover.play();
-
         }, this.paddleNerfTime);
-
     },
 
     bricksUpdate: function () {
@@ -729,10 +752,7 @@ BasicGame.Game.prototype = {
 
         ball.animations.play('rotate');
 
-        //ball felt down
         if (ball.body.y > this.game.world.height + ball.body.height) {
-
-            //ball felt down into the abyss
 
             ball.body.x = this.ballInitialX;
             ball.body.y = this.ballInitialY;
@@ -746,7 +766,6 @@ BasicGame.Game.prototype = {
 
                 this.takeOneLifeDown();
 
-                //clear and reset some stuff when player drops the ball and lose a lige
                 this.items.callAll('kill');
                 this.isPaddleNerfed = false;
 
@@ -811,13 +830,9 @@ BasicGame.Game.prototype = {
     },
 
     paddleHitBallHandler: function (paddle, ball) {
-        //just an empty handler
     },
 
     paddleHitBallProcess: function (paddle, ball) {
-
-        //the two lines down show you a way to color your message in the console
-        // also a defenitly check this: https://developers.google.com/chrome-developer-tools/docs/tips-and-tricks
 
         //console.log("%cprocess", "background: red;");
         //console.log(paddle.name + ' colide with ' + ball.name);
@@ -831,6 +846,7 @@ BasicGame.Game.prototype = {
 
     determineBounceVelocityX: function (_paddle, _ball) {
 
+        // X 축에 대한 반동 축 결정
         var bounceVelocityX = _ball.body.velocity.x;
 
         var ballBodyCenterX = _ball.body.x + _ball.body.halfWidth;
@@ -838,22 +854,12 @@ BasicGame.Game.prototype = {
         var distanceX = Math.abs(ballBodyCenterX - paddleBodyCenterX);
 
         if (_ball.body.right < _paddle.body.x) {
-
-            //  Ball is on the left-hand vertical side of the paddle
-
             var directionVariable = (bounceVelocityX > 0) ? -1 : 1;
-
             return bounceVelocityX * directionVariable - (distanceX * 2);
-
         }
 
         if (ballBodyCenterX == paddleBodyCenterX) {
-
-            //  Ball is perfectly in the middle
-            //  Add a little random X to prevent it bouncing straight up!
-
             return bounceVelocityX + 1 + Math.random() * 8;
-
         }
 
         var bounceCoefficient = 0;
@@ -865,24 +871,15 @@ BasicGame.Game.prototype = {
             } else if (bounceScale > halfWidth / 3 && bounceScale < halfWidth / 3 * 2) {
                 return 0.9
             } else {
-                //it's at the end make the ball bounce faster
                 return 1.1;
             }
 
         }
 
         if (ballBodyCenterX < paddleBodyCenterX) {
-
-            // Ball hit the top of the paddle, left of center
-
             bounceCoefficient = -1 * coefficient(distanceX, _paddle.body.halfWidth);
-
         } else {
-
-            // Ball hit the paddle right of center, either on the top or on the side
-
             bounceCoefficient = coefficient(_paddle.body.halfWidth - distanceX, _paddle.body.halfWidth);
-
         }
 
         var ratio = (distanceX) / _paddle.body.halfWidth * bounceCoefficient;
@@ -901,21 +898,52 @@ BasicGame.Game.prototype = {
 
     ballHitBrickHandler: function (_ball, _brick) {
 
-        _brick.animations.play("brick_die", 15);  //just play
+        _brick.animations.play("brick_die", 15);
         _brick.events.onAnimationComplete.add(this.onAnimationCompleteBrick, this);
 
         this.brickDeath.play();
 
-        this.score += this.scorePerBrick;
+        var that = this;
+
+        // 피버타임이면 ..?
+        if (this.isfevertime) {
+            this.score += 200;
+        } else {
+            this.score += this.scorePerBrick;
+            this.feverscore += 100;
+
+            if (this.feverscore == this.feverscore_max) {
+                this.isfevertime = true;
+                this.fevertime_bar_gauge.height = -150;
+                this.fevertimesound.play();
+
+                this.feverTimeout = setTimeout(function () {
+                    that.isfevertime = false;
+                    that.fevertime_bar_gauge.height = 0;
+                    that.feverscore = 0;
+                    //console.log('fevertimeout call');
+
+                }, this.fevertime);
+
+            } else {
+                this.fevertime_bar_gauge.height = -150 * (this.feverscore / this.feverscore_max);
+            }
+
+        }
+
 
         this.scoreText.text = 'SCORE: ' + this.score;
 
         if (this.bricksWithItems.indexOf(_brick.name) > -1) {
             this.dropItem(_brick.x, _brick.y);
         }
+
     },
 
+
     ballHitBricklProcess: function (ball, _brick) {
+        // 볼 & 브릭 충돌
+        //console.log(ball, _brick);
 
         if (this.shakeEffect) {
             this.shakeGame();  //funny extra ;)
@@ -928,12 +956,19 @@ BasicGame.Game.prototype = {
         var typeFrame = "";
         var itemEffectName = "";
 
-        if (Math.floor(Math.random() * 2)) {
+        var itemFlag = Math.floor(Math.random() * this.dropItemCount);
+        //TODO 패들 사이즈 업 아이템만 나오도록!
+        //var itemFlag = 2;
+        console.log("itemFlag : " + itemFlag);
+        if (itemFlag == 0) {
             typeFrame = 'power_paddlesize_down.png';
             itemEffectName = "powerDown";
-        } else {
+        } else if (itemFlag == 1) {
             typeFrame = 'power_ball_up.png';
             itemEffectName = "powerUp";
+        } else if (itemFlag == 2) {
+            typeFrame = 'power_paddle_up.png';
+            itemEffectName = "powerPaddleUp";
         }
 
         var dropItem;
@@ -944,7 +979,6 @@ BasicGame.Game.prototype = {
         }
         dropItem.name = 'item' + (tempCount + 1);
 
-        //custom property
         dropItem.itemEffectName = itemEffectName;
 
         this.physics.enable(dropItem, Phaser.Physics.ARCADE);
@@ -957,13 +991,12 @@ BasicGame.Game.prototype = {
 
     onAnimationCompleteBrick: function (sprite, animation) {
 
-        //check which animation was finished
         if (animation.name == "brick_die") {
             sprite.kill(); //working kill a brick
 
-            //  Are they any bricks left?
+
             if (this.bricks.countLiving() == 0) {
-                //  New level starts
+                // 새로운 레벨 시작
                 this.score += this.scorePerLevel;
                 this.scoreText.text = 'SCORE: ' + this.score;
                 this.nextLevel();
@@ -981,9 +1014,12 @@ BasicGame.Game.prototype = {
             this.nerfPaddle();
             //play a sound
             this.powerdown.play();
-        } else {
+        } else if (item.itemEffectName == "powerUp") {
             this.createBall(true);
-            //play a sound
+            //play 사운드 실행
+            this.powerup.play();
+        } else if (item.itemEffectName == "powerPaddleUp") {
+            this.buffPaddle();
             this.powerup.play();
         }
         item.kill();
@@ -1012,7 +1048,7 @@ BasicGame.Game.prototype = {
         var rumbleInterval;
         var rumbleStopTimeOut;
         var rumbleTime = 500;
-        var rumbleDuration = 300; //in milliseconds
+        var rumbleDuration = 300;
 
         clearInterval(rumbleInterval);
         rumbleInterval = setInterval(this.shake, rumbleSpeed, this.game.camera, 2, 5);
@@ -1023,7 +1059,6 @@ BasicGame.Game.prototype = {
     stopShake: function (rect, interval) {
         clearInterval(interval);
 
-        // reset camera to inital position
         rect.x = 0;
         rect.y = 0;
 

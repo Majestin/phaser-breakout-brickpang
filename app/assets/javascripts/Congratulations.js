@@ -14,12 +14,6 @@ BasicGame.Congratulations.prototype = {
 
 	create: function () {
 
-		//	We've already preloaded our assets, so let's kick right into the Main Menu itself.
-		//	Here all we're doing is playing some mu
-		//
-		//     game.load.image('bg', 'assets/images/bg_prerendered.png');    game.load.image('bg', 'assets/images/bg_prerendered.png');    game.load.image('bg', 'assets/images/bg_prerendered.png');sic and adding a picture and button
-		//	Naturally I expect you to do something significantly better :)
-
         this.game.add.sprite(0, 0, 'bg');
 
 		//this.music = this.add.audio('titleMusic');
@@ -45,13 +39,11 @@ BasicGame.Congratulations.prototype = {
 
 	update: function () {
 
-		//	Do some nice funky main menu effect here
 
 	},
 
     click: function(x, y, timedown) {
         //console.log("CLICK IS MADE");
-        //	And start the actual game
         this.game.state.start('MainMenu');
     }
 
